@@ -1,0 +1,109 @@
+<! DOCTYPE html>
+<html>
+    <head>
+        <title>Les velus dans l'assiette</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="maquette2.css">
+		<script>
+			window.onload = function() {
+				var i1 = document.getElementById("texte1");
+				var i3 = document.getElementById("texte3");
+				var i4 = document.getElementById("texte4");
+				var i5 = document.getElementById("texte5");
+				i1.style.opacity = 0;
+				i3.style.opacity = 0;
+				i4.style.opacity = 0;
+				i5.style.opacity = 0;
+			};
+			var compteurDict = {};
+			compteurDict.image1 = 0;
+			compteurDict.image2 = 0;
+			compteurDict.image3 = 0;
+			compteurDict.image4 = 0;
+			compteurDict.image5 = 0;
+			
+			function stepOut(levelimg1,leveltxt1,idimage,idtexte) {
+				var image1 = document.getElementById(idimage);
+				var texte1 = document.getElementById(idtexte);
+				//document.getElementById("retourne3").innerHTML = "Out";
+                image1.style.opacity = levelimg1;
+				texte1.style.opacity = leveltxt1;
+                if (levelimg1 > 0 || leveltxt1 < 1) {
+					//document.getElementById("retourne5").innerHTML = levelimg1;
+                    levelimg1 -= 0.1;
+					leveltxt1 += 0.1;
+                    setTimeout(stepOut, 50, levelimg1, leveltxt1, idimage, idtexte);
+                }
+            };
+			
+			function stepIn(levelimg1,leveltxt1,idimage,idtexte) {
+				var image1 = document.getElementById(idimage);
+				var texte1 = document.getElementById(idtexte);
+                image1.style.opacity = levelimg1;
+				//document.getElementById("retourne2").innerHTML = image1.style.opacity;
+				//document.getElementById("retourne3").innerHTML = "In";
+				texte1.style.opacity = leveltxt1;
+                if (levelimg1 < 1 && leveltxt1 > 0) {
+                    levelimg1 += 0.1;
+					leveltxt1 -= 0.1;
+                    setTimeout(stepIn, 50, levelimg1, leveltxt1, idimage, idtexte);
+                }
+            };
+			
+			function change(idimage,idtexte){
+				if(compteurDict[idimage] % 2 == 0){
+					//document.getElementById("retourne4").innerHTML = "outcompteur";
+					//document.getElementById("retourne").innerHTML = compteurDict[idimage];
+					stepOut(1,0,idimage,idtexte);
+				}
+				else{
+					//document.getElementById("retourne4").innerHTML = "incompteur";
+					//document.getElementById("retourne").innerHTML = compteurDict[idimage];
+					stepIn(0,1,idimage,idtexte);
+				}
+				compteurDict[idimage] = compteurDict[idimage] + 1;
+			}
+		</script>
+    </head>
+	<body>
+		<nav>
+			<br>
+			<a href="index.html" style="text-decoration : none ; color : rgb(100,100,100)"><b>Accueil |</b></a>
+			<a href="maquette1.html" style="text-decoration : none ; color : rgb(100,100,100)"><b>Santé |</b></a>
+			<a href="maquette2.html" style="text-decoration : none ; color : rgb(100,100,100)"><b>Environnement |</b></a>
+			<a href="maquette3.html" style="text-decoration : none ; color : rgb(100,100,100)"><b>Ethique |</b></a>
+			<a href="cartes.html" style="text-decoration : none ; color : rgb(100,100,100)"><b>Cartes |</b></a>
+			<a href="semainier.html" style="text-decoration : none ; color : rgb(100,100,100)"><b>Semainier</b></a>
+			<hr>
+		</nav>
+		<table class="tableau">
+			<tr>
+				<td>
+					<div onclick="change('image1','texte1')" class="img1">
+						<div id="image1"><img src="maq21.png" style="position: absolute; z-index:700; left:1%; top:23%; width:98%; height:auto"/></div>
+						<div id="texte1" style="position:relative; top: 0.5%; left:5%; z-index:50; width:90%" class="txt1"><img src="maq21txt.png" style="width:100%; height:auto"/></div>
+					</div>
+				</td>
+				<td>
+					<div onclick="change('image3','texte3')" class="img3">
+						<div id="image3"><img src="maq22.png" style="position: absolute; z-index:700; left:1%; top:10%; width:98%; height:auto"/></div>
+						<div id="texte3" style="position:relative;top: 1%; left:6%; z-index:50" class="txt1"><img src="maq22txt.png" style="width:88%; height:auto"/></div>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div onclick="change('image4','texte4')" class="img4">
+						<div id="image4"><img src="maq23.png" style="position: absolute; z-index:700; left:1%; top:2%; width:98%; height:auto"/></div>
+						<div id="texte4" style="position:relative;top: 4%; left:1%; z-index:50" class="txt1"><img src="maq23txt.png" style="width:auto; height:92%"/></div>
+					</div>
+				</td>
+				<td>
+					<div onclick="change('image5','texte5')" class="img5">
+						<div id="image5"><img src="maq24.png" style="position: absolute; z-index:700; left:1%; top:30%; width:98%; height:auto"/></div>
+						<div id="texte5" style="position:relative;top: 1%; left:1%; z-index:50" class="txt1"><img src="maq24txt.png" style="width:auto; height:98%"/></div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</body>

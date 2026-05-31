@@ -1,0 +1,39 @@
+html{
+    max-width: 200%;
+    overflow-x: hidden;
+}
+
+@font-face {
+  font-family: fonttitre; /* set name */
+  src: url(Cinzel-Regular.otf); /* url of the font */
+}
+
+body{
+	position : absolute;
+	background-color : rgb(217,244,205);
+	z-index : 0;
+}
+
+nav{
+	background-color : rgb(217,244,205);
+	position : fixed;
+	font-family : "Arial";
+	top : 0px;
+	z-index : 999;
+	width : 99%;
+	text-align : right;
+}
+
+.potitnuage{
+	position : relative;
+	left : 10%;
+	top : 10%;
+	width : 90%;
+	height : auto;
+}
+
+.semainier{
+	position : absolute;
+	top : 120%;
+	left : 5%;
+}

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-id="th-modified">NutriVie — Jeu de cartes Vrai/Faux</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<script type="text/javascript" src="https://ff.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=tYVdXlYx3dV5JmiVWJL_GwFqfFgEhMqW9cisn15ZJAVk54RfLl-bjSQuTm-RP1k8NJ6vv6w6SzepAx7Fhezd0Q" charset="UTF-8"></script><style>
+  * { 
+    box-sizing: border-box;
+    margin: 0; 
+    padding: 0; 
+  }
+
+  /* Centre tout le contenu sur l'écran proprement */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden; /* Empêche les barres de défilement */
+    background: #f5f5f0;
+  }
+
+  body { 
+    font-family: system-ui, sans-serif; 
+    color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centre parfaitement à la verticale */
+    padding: 20px;
+  }
+
+  /* Conteneur global sans le zoom "scale" problématique */
+  .game-container-fixed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px; /* Élargi pour un jeu plus grand */
+  }
+
+  /* Titre plus grand et bien visible */
+  h1 { 
+    font-size: 28px; 
+    font-weight: 700; 
+    margin-bottom: 1rem; 
+    color: #1a1a1a; 
+    text-align: center;
+  }
+
+  /* Barre de score agrandie */
+  #score-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 14px 24px;
+    background: #eeeee8;
+    border-radius: 14px;
+    margin-bottom: 2rem;
+    font-size: 16px; /* Texte plus grand */
+    color: #666;
+    width: 100%;
+    max-width: 860px;
+  }
+  #score-bar span { font-weight: 600; color: #1a1a1a; }
+
+  /* Zone de jeu élargie */
+  #game {
+    display: flex;
+    gap: 60px; /* Plus d'espace entre le tas et la réponse */
+    min-height: 400px;
+    align-items: center;
+    position: relative;
+    width: 100%;
+  }
+
+  #left-zone, #right-zone {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .zone-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  /* TAILLE DES CARTES AGRANDIE (Passée de 220x320 à 260x380) */
+  .deck-container {
+    position: relative;
+    width: 260px;
+    height: 380px;
+    cursor: pointer;
+  }
+
+  .deck-shadow {
+    position: absolute;
+    width: 260px;
+    height: 380px;
+    border-radius: 20px;
+    background: #e0e0d8;
+    border: 0.5px solid #ccc;
+  }
+
+  .deck-top {
+    position: absolute;
+    width: 260px;
+    height: 380px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1D9E75 0%, #085041 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    overflow: hidden;
+    transition: transform 0.15s ease;
+  }
+
+  .deck-top:hover { transform: translateY(-4px); }
+
+  .deck-count-badge {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    align-self: flex-end;
+  }
+
+  .deck-question-preview {
+    color: rgba(255,255,255,0.92);
+    font-size: 16px; /* Texte de question plus grand */
+    font-weight: 500;
+    line-height: 1.5;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  .deck-label {
+    color: rgba(255,255,255,0.45);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    align-self: center;
+  }
+
+  .hint { font-size: 13px; color: #888; margin-top: 16px; text-align: center; }
+
+  /* Zone de réponse par défaut agrandie */
+  .placeholder-card {
+    width: 280px;
+    height: 400px;
+    border-radius: 24px;
+    border: 2px dashed #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #aaa;
+    font-size: 15px;
+  }
+  .placeholder-card i { font-size: 40px; }
+
+  /* TAILLE DE LA CARTE DE RÉPONSE FIXÉE */
+  .settled-card {
+    width: 280px;
+    height: 400px;
+    border-radius: 24px;
+    background: #fff;
+    border: 0.5px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+
+  /* Flying card (Doit faire la taille du paquet) */
+  #flying-card {
+    position: fixed;
+    width: 260px;
+    height: 380px;
+    border-radius: 20px;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+  }
+
+  .flying-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .fly-front {
+    background: linear-gradient(135deg, #1D9E75 0%, #085041 100%);
+    align-items: flex-start;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .fly-front .fq {
+    color: rgba(255,255,255,0.92);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  .fly-back {
+    background: #fff;
+    border: 0.5px solid #ddd;
+    transform: rotateY(180deg);
+    justify-content: space-between;
+  }
+
+  .diff-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .badge-debutant { background: #EAF3DE; color: #3B6D11; }
+  .badge-intermediaire { background: #FAEEDA; color: #854F0B; }
+  .badge-confirme { background: #FAECE7; color: #993C1D; }
+
+  .answer-badge {
+    font-size: 26px;
+    font-weight: 800;
+    padding: 6px 20px;
+    border-radius: 14px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .answer-vrai { background: #EAF3DE; color: #3B6D11; }
+  .answer-faux { background: #FCEBEB; color: #A32D2D; }
+
+  .explication {
+    font-size: 13px;
+    color: #556;
+    line-height: 1.6;
+  }
+
+  .vote-buttons { display: flex; gap: 12px; margin-top: 14px; }
+  .vote-btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    background: #fff;
+    color: #1a1a1a;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .vote-btn:hover { background: #f5f5f0; }
+  .vote-btn:active { transform: scale(0.97); }
+
+  #end-screen {
+    display: none;
+    text-align: center;
+    padding: 3rem 1rem;
+    max-width: 400px;
+  }
+  #end-score { font-size: 72px; font-weight: 500; line-height: 1; }
+  #end-label { font-size: 18px; color: #666; margin: 8px 0 16px; }
+  #end-msg { font-size: 15px; color: #666; margin-bottom: 24px; }
+  #restart-btn {
+    padding: 10px 24px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    color: #1a1a1a;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  #restart-btn:hover { background: #f0f0ea; }
+</style>
+<meta property="og:title" content="NutriVie — Jeu de cartes Vrai/Faux" data-id="th-modified" ><meta name="description" content="carte 3" data-id="th-modified" ><meta property="og:description" content="carte 3" data-id="th-modified" ><meta property="og:image" content="https://tiiny.host/assets/logo-purple-bg.png" data-id="th-modified" ><meta property="og:image:width" content="1501" data-id="th-modified" ><meta property="og:image:height" content="1501" data-id="th-modified" ><meta property="og:image:type" content="image/png" data-id="th-modified" ><meta property="og:url" content="https://cartesfinales.tiiny.site/" data-id="th-modified" ><meta property="og:type" content="website" data-id="th-modified" ><script defer data-domain="cartesfinales.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
+<body>
+
+<div class="game-container-fixed">
+  <h1>🐄 NutriVie — Vrai ou Faux</h1>
+
+  <div id="score-bar">
+    <i class="ti ti-cards" style="font-size:18px"></i>
+    <span id="sb-remain">50</span> cartes &nbsp;·&nbsp;
+    <i class="ti ti-check" style="font-size:18px;color:#3B6D11"></i>
+    <span id="sb-correct">0</span> correctes &nbsp;·&nbsp;
+    <i class="ti ti-x" style="font-size:18px;color:#A32D2D"></i>
+    <span id="sb-wrong">0</span> ratées
+  </div>
+
+  <div id="game">
+    <div id="left-zone">
+      <div class="zone-title">Tas de cartes</div>
+      <div class="deck-container" id="deck" onclick="handleDeckClick()">
+        <div class="deck-shadow" style="top:6px;left:6px"></div>
+        <div class="deck-shadow" style="top:3px;left:3px"></div>
+        <div class="deck-top" id="deck-top">
+          <div class="deck-count-badge" id="deck-count">50</div>
+          <div class="deck-question-preview" id="deck-preview">Cliquez pour tirer une carte</div>
+          <div class="deck-label">NutriVie</div>
+        </div>
+      </div>
+      <div class="hint">Question visible sur cette face</div>
+    </div>
+
+    <div id="right-zone">
+      <div class="zone-title">Réponse</div>
+      <div id="card-area">
+        <div class="placeholder-card">
+          <i class="ti ti-rotate-clockwise-2"></i>
+          <span>La réponse apparaîtra ici</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="flying-card">
+    <div class="flying-face fly-front" id="fly-front">
+      <div class="deck-count-badge" style="align-self:flex-end" id="fly-badge"></div>
+      <div class="fq" id="fly-q"></div>
+      <div style="color:rgba(255,255,255,0.45);font-size:11px;letter-spacing:0.05em;text-transform:uppercase;align-self:center">NutriVie</div>
+    </div>
+    <div class="flying-face fly-back" id="fly-back">
+      <div>
+        <span class="diff-badge" id="fly-diff"></span>
+        <div class="answer-badge" id="fly-ans"></div>
+        <div class="explication" id="fly-exp"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="end-screen">
+    <div style="font-size:48px;margin-bottom:12px">🎉</div>
+    <div id="end-score"></div>
+    <div id="end-label">bonnes réponses</div>
+    <div id="end-msg"></div>
+    <button id="restart-btn" onclick="restart()">↺ Recommencer</button>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  {q:"Les œufs contiennent à la fois des protéines et des lipides.",r:"VRAI",e:"Un œuf apporte ~6 g de protéines et ~5 g de lipides de qualité, dont des phospholipides essentiels.",d:"debutant"},
+  {q:"La viande rouge est une source de fer mieux absorbée que le fer des végétaux.",r:"VRAI",e:"Le fer héminique (viande) est absorbé à 15–35 %, contre 2–10 % pour le fer végétal.",d:"debutant"},
+  {q:"Le lait de vache est la seule source alimentaire de calcium.",r:"FAUX",e:"D'autres aliments en contiennent, mais le lait reste une des sources les plus biodisponibles et pratiques.",d:"debutant"},
+  {q:"Les poissons gras sont riches en oméga-3 bénéfiques pour le cœur.",r:"VRAI",e:"Saumon, maquereau, sardine apportent de l'EPA et DHA, aux effets cardioprotecteurs reconnus.",d:"debutant"},
+  {q:"Le fromage est un aliment fermenté intéressant pour la santé intestinale.",r:"VRAI",e:"Sa fabrication implique des bactéries lactiques qui peuvent contribuer à l'équilibre du microbiote.",d:"debutant"},
+  {q:"Les protéines animales contiennent les 9 acides aminés essentiels.",r:"VRAI",e:"Elles sont dites « complètes », contrairement à la plupart des protéines végétales.",d:"debutant"},
+  {q:"La vitamine B12 est naturellement présente en quantité suffisante dans les végétaux.",r:"FAUX",e:"La B12 est quasi absente des végétaux ; les produits animaux en sont la source principale indispensable.",d:"debutant"},
+  {q:"Le yaourt nature est un aliment ultra-transformé.",r:"FAUX",e:"Sa fabrication (fermentation du lait) est un procédé traditionnel minimal, classé en groupe NOVA 3.",d:"debutant"},
+  {q:"Les sardines en conserve avec arêtes sont une excellente source de calcium.",r:"VRAI",e:"Les arêtes comestibles apportent ~380 mg de calcium pour 100 g, comparable au lait.",d:"debutant"},
+  {q:"Le poulet est généralement moins riche en graisses saturées que le bœuf.",r:"VRAI",e:"La viande blanche (volaille sans peau) contient ~3 g de lipides saturés contre ~7 g pour la viande bovine.",d:"debutant"},
+  {q:"Les crevettes sont pauvres en protéines.",r:"FAUX",e:"Elles apportent 18–24 g de protéines pour 100 g, c'est une source particulièrement concentrée.",d:"debutant"},
+  {q:"Les œufs peuvent être consommés par les végétariens mais pas par les végétaliens.",r:"VRAI",e:"Les végétaliens excluent tout produit d'origine animale, y compris les œufs.",d:"debutant"},
+  {q:"Le lait entier contient plus de lipides que le lait demi-écrémé.",r:"VRAI",e:"Lait entier ≈ 3,5 % de MG ; lait demi-écrémé ≈ 1,5–1,8 % de MG.",d:"debutant"},
+  {q:"Le beurre est principalement composé de graisses saturées.",r:"VRAI",e:"Il contient environ 50–70 % d'acides gras saturés, ce qui justifie une consommation modérée.",d:"debutant"},
+  {q:"Les produits laitiers couvrent à eux seuls les besoins journaliers en vitamine D.",r:"FAUX",e:"Ils en contiennent peu ; la principale source est la synthèse cutanée sous UV, complétée par les poissons gras.",d:"debutant"},
+  {q:"Le foie de veau est l'un des aliments les plus riches en vitamine A.",r:"VRAI",e:"Attention : très concentré en vitamine A et en cuivre, il peut rapidement s'avérer toxique.",d:"debutant"},
+  {q:"Consommer de la viande avec des légumes riches en vitamine C améliore l'absorption du fer.",r:"VRAI",e:"La vitamine C favorise la réduction du fer ferreux et potentialise l'absorption du fer héminique.",d:"debutant"},
+  {q:"Le miel est considéré comme un produit animal.",r:"VRAI",e:"Il est produit par les abeilles à partir du nectar, il est donc d'origine animale.",d:"debutant"},
+  {q:"Notre corps a besoin de 20 acides aminés.",r:"VRAI",e:"Il peut en Neuro-transmetteurs indispensables.",d:"debutant"},
+  {q:"La biodisponibilité du zinc est plus élevée dans les produits animaux que dans les légumineuses.",r:"VRAI",e:"L'acide phytique des légumineuses réduit l'absorption du zinc. La viande ne contient pas cet inhibiteur.",d:"intermediaire"},
+  {q:"La myoglobine est responsable de la couleur rouge de la viande et témoigne de sa richesse en fer.",r:"VRAI",e:"La myoglobine est une protéine de stockage de l'oxygène musculaire, directement liée à la teneur en fer.",d:"intermediaire"},
+  {q:"Les acides gras oméga-3 EPA et DHA sont abondants dans les huiles végétales courantes.",r:"FAUX",e:"Les huiles végétales contiennent de l'ALA (précurseur), mais EPA et DHA se trouvent surtout dans les poissons gras.",d:"intermediaire"},
+  {q:"La teneur en oméga-3 du lait est identique qu'il vienne d'animaux au pâturage ou en stabulation.",r:"FAUX",e:"Le pâturage enrichit le lait en oméga-3 et en CLA par rapport à une alimentation en stabulation intensive.",d:"intermediaire"},
+  {q:"Le concept One Health considère indépendamment la santé humaine et la santé animale.",r:"FAUX",e:"One Health reconnaît l'interdépendance entre santé humaine, animale et environnementale.",d:"intermediaire"},
+  {q:"La listériose est principalement liée à la consommation de produits laitiers crus et de charcuteries.",r:"VRAI",e:"Listeria est une bactérie qui se développe même au froid et se retrouve notamment dans les fromages au lait cru et les charcuteries.",d:"intermediaire"},
+  {q:"Les mycotoxines peuvent contaminer les produits animaux par transfert indirect via l'alimentation des animaux.",r:"VRAI",e:"Des animaux nourris avec des aliments contaminés peuvent transférer des toxines dans leur lait par exemple.",d:"intermediaire"},
+  {q:"La consommation de 2 portions de poisson par semaine, dont un poisson gras, est recommandée par l'ANSES.",r:"VRAI",e:"Cette recommandation vise à couvrir les besoins en oméga-3 à longue chaîne (EPA/DHA).",d:"intermediaire"},
+  {q:"Le colostrum bovin a la même composition que le lait ordinaire.",r:"FAUX",e:"Le colostrum est riche en immunoglobulines, lactoferrine et facteurs de croissance absents du lait courant.",d:"intermediaire"},
+  {q:"Les bactéries E. coli O157:H7 peuvent être transmises par la viande de bœuf peu cuite.",r:"VRAI",e:"Ce sérotype produit des shigatoxines et est un agent zoonotique ; la cuisson à cœur (70 °C) le détruit.",d:"intermediaire"},
+  {q:"La charcuterie est classée cancérogène de groupe 1 par le CIRC uniquement à partir de 150 g/semaine.",r:"FAUX",e:"Le CIRC classe les viandes transformées en groupe 1 sans seuil strict ; la recommandation est de limiter la consommation.",d:"intermediaire"},
+  {q:"Un élevage bien conduit peut contribuer positivement à la biodiversité des prairies.",r:"VRAI",e:"Le pastoralisme extensif maintient des écosystèmes prairiaux riches en espèces végétales et animales.",d:"intermediaire"},
+  {q:"Les graisses saturées d'origine laitière ont le même impact cardiovasculaire que celles des viandes transformées.",r:"FAUX",e:"Des études récentes nuancent : les graisses laitières seraient moins délétères que celles des charcuteries, en raison de la matrice alimentaire.",d:"intermediaire"},
+  {q:"Le rapport ω6/ω3 de l'alimentation occidentale dépasse souvent 15, alors que l'idéal est inférieur à 5.",r:"VRAI",e:"L'excès de ω6 inhibe la conversion de l'ALA en EPA/DHA et favorise une réponse pro-inflammatoire.",d:"confirme"},
+  {q:"La consommation élevée de protéines de lactosérum (whey) peut augmenter l'IGF-1 sérique.",r:"VRAI",e:"Les protéines laitières stimulent la sécrétion d'IGF-1, facteur de croissance anabolique mais aussi discuté en oncologie.",d:"confirme"},
+  {q:"La résistance aux antibiotiques est uniquement liée à leur usage en médecine humaine.",r:"FAUX",e:"L'usage en élevage sélectionne des bactéries résistantes transmissibles à l'humain via la chaîne alimentaire.",d:"confirme"},
+  {q:"La cuisson à haute température des viandes génère des amines hétérocycliques (AHC) potentiellement cancérogènes.",r:"VRAI",e:"Les AHC se forment lors de cuissons >150 °C (gril, friture) ; elles sont classées cancérogènes probables par le CIRC.",d:"confirme"},
+  {q:"L'acide linoléique conjugué (CLA) présent dans les produits laitiers aurait des propriétés anti-inflammatoires.",r:"VRAI",e:"Le CLA, plus abondant dans les produits d'animaux au pâturage, est étudié pour ses effets anti-inflammatoires et immunomodulateurs.",d:"confirme"},
+  {q:"Les protéines de soja isolé ont un DIAAS comparable à celui des protéines animales.",r:"VRAI",e:"Le soja isolé atteint un DIAAS proche de 1, ce qui en fait une exception parmi les protéines végétales.",d:"confirme"},
+  {q:"Le microbiome intestinal influence la façon dont les produits animaux sont métabolisés.",r:"VRAI",e:"La composition du microbiome conditionne la production de TMAO, d'AGCC et d'autres métabolites issus des protéines et lipides animaux.",d:"confirme"},
+  {q:"La transmission de la grippe aviaire H5N1 à l'humain peut survenir par consommation de volaille bien cuite.",r:"FAUX",e:"La cuisson à cœur (70 °C) inactive le virus. La transmission se fait par contact direct avec des animaux infectés.",d:"confirme"},
+  {q:"L'axe intestin-cerveau peut être influencé par les acides aminés issus des protéines animales.",r:"VRAI",e:"Le tryptophane (précurseur de la sérotonine), abondant dans les protéines animales, influence la synthèse de neuromédiateurs.",d:"confirme"},
+  {q:"La méthylation de l'ADN peut être modulée par l'apport en méthionine d'origine animale.",r:"VRAI",e:"La méthionine est substrat du cycle de méthylation ; un apport adapté est indispensable à la régulation épigénétique.",d:"confirme"},
+  {q:"La whey et la caséine ont le même effet sur la synthèse protéique musculaire post-exercice.",r:"FAUX",e:"La whey (absorption rapide) est plus efficace en récupération immédiate ; la caséine (lente) est mieux adaptée à la prise nocturne.",d:"confirme"},
+  {q:"Un repas riche en graisses saturées peut favoriser une endotoxémie métabolique par absorption de LPS intestinaux.",r:"VRAI",e:"Les chylomicrons facilitent l'absorption de LPS bactériens lors d'un repas gras, induisant une inflammation de bas grade.",d:"confirme"},
+  {q:"Les nitrosamines peuvent se former lors de la cuisson à haute température de la charcuterie nitritée.",r:"VRAI",e:"Les nitrites réagissent avec les amines des protéines pour former des nitrosamines, surtout lors de la friture ou du gril.",d:"confirme"},
+  {q:"L'encéphalopathie spongiforme bovine (ESB) illustre l'importance d'une approche One Health dans la filière animale.",r:"VRAI",e:"La crise ESB/vMCJ a montré comment une pathologie animale mal surveillée peut avoir des conséquences humaines graves.",d:"confirme"},
+  {q:"Les acides gras à chaîne courte (AGCC) comme le butyrate proviennent principalement de la fermentation des protéines animales.",r:"FAUX",e:"Les AGCC résultent surtout de la fermentation des fibres alimentaires ; la fermentation protéique produit des métabolites différents.",d:"confirme"},
+  {q:"Une alimentation incluant des produits animaux de qualité, bien choisie et équilibrée, peut s'inscrire dans une démarche One Health durable.",r:"VRAI",e:"Les filières animales raisonnées (pâturage extensif, antibiotiques limités, bien-être animal) peuvent allier santé humaine, animale et environnementale.",d:"confirme"},
+  {q:"La viande bien cuite ne peut pas transmettre de zoonose.",r:"FAUX",e:"Certaines zoonoses résistent à la cuisson ou se transmettent autrement. La cuisson réduit fortement le risque mais ne l'élimine pas totalement.",d:"intermediaire"},
+];
+
+let deck = [], currentCard = null, correct = 0, wrong = 0, animating = false, waitingVote = false;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function badgeClass(d){return d==='debutant'?'badge-debutant':d==='intermediaire'?'badge-intermediaire':'badge-confirme';}
+function badgeLabel(d){return d==='debutant'?'🟢 Débutant':d==='intermediaire'?'🟡 Intermédiaire':'🔴 Confirmé';}
+
+function updateScoreBar(){
+  document.getElementById('sb-remain').textContent=deck.length;
+  document.getElementById('sb-correct').textContent=correct;
+  document.getElementById('sb-wrong').textContent=wrong;
+}
+
+function updateDeckPreview(){
+  if(deck.length===0){
+    document.getElementById('deck-top').style.opacity='0.4';
+    document.getElementById('deck-top').style.cursor='default';
+    document.getElementById('deck-preview').textContent='Plus de cartes !';
+    return;
+  }
+  document.getElementById('deck-preview').textContent=deck[deck.length-1].q;
+  document.getElementById('deck-count').textContent=deck.length;
+}
+
+function handleDeckClick(){
+  if(animating||waitingVote||deck.length===0) return;
+  animating=true;
+  currentCard=deck.pop();
+  updateScoreBar();
+  updateDeckPreview();
+
+  const fc=document.getElementById('flying-card');
+  const deckEl=document.getElementById('deck-top');
+  const rightZone=document.getElementById('right-zone');
+  
+  // Mesures exactes pour l'animation avec la nouvelle taille de cartes
+  const deckX = deckEl.offsetLeft + deckEl.parentElement.offsetLeft;
+  const deckY = deckEl.offsetTop + deckEl.parentElement.offsetTop;
+  const targetX = rightZone.offsetLeft + (rightZone.offsetWidth / 2) - 140; // Ajusté pour carte 280px de large
+  const targetY = rightZone.offsetTop;
+
+  document.getElementById('fly-q').textContent=currentCard.q;
+  document.getElementById('fly-badge').textContent=deck.length+1;
+  const diffEl=document.getElementById('fly-diff');
+  diffEl.className='diff-badge '+badgeClass(currentCard.d);
+  diffEl.textContent=badgeLabel(currentCard.d);
+  const ansEl=document.getElementById('fly-ans');
+  ansEl.className='answer-badge answer-'+currentCard.r.toLowerCase();
+  ansEl.textContent=currentCard.r;
+  document.getElementById('fly-exp').textContent=currentCard.e;
+
+  fc.style.width='260px';
+  fc.style.height='380px';
+  fc.style.left=deckX+'px';
+  fc.style.top=deckY+'px';
+  fc.style.display='block';
+  fc.style.transition='none';
+  fc.style.transform='rotateY(0deg)';
+
+  fc.offsetHeight;
+  fc.style.transition='transform 0.7s cubic-bezier(0.4,0,0.2,1), left 0.7s cubic-bezier(0.4,0,0.2,1), top 0.7s cubic-bezier(0.4,0,0.2,1)';
+  fc.style.transform='rotateY(180deg)';
+  fc.style.left=targetX+'px';
+  fc.style.top=targetY+'px';
+
+  setTimeout(()=>{
+    fc.style.display='none';
+    showSettledCard();
+    animating=false;
+    waitingVote=true;
+  }, 720);
+}
+
+function showSettledCard(){
+  document.getElementById('card-area').innerHTML=`
+    <div class="settled-card">
+      <div>
+        <span class="diff-badge ${badgeClass(currentCard.d)}">${badgeLabel(currentCard.d)}</span>
+        <div class="answer-badge answer-${currentCard.r.toLowerCase()}">${currentCard.r}</div>
+        <div class="explication">${currentCard.e}</div>
+      </div>
+      <div>
+        <div style="font-size:13px;color:#888;margin-bottom:8px;font-weight:500;">Tu avais bon ?</div>
+        <div class="vote-buttons">
+          <button class="vote-btn" onclick="vote(true)">✓ Oui</button>
+          <button class="vote-btn" onclick="vote(false)">✗ Non</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function vote(wasCorrect){
+  if(!waitingVote) return;
+  waitingVote=false;
+  if(wasCorrect) correct++; else wrong++;
+  updateScoreBar();
+  const btns=document.querySelector('.vote-buttons');
+  if(btns) btns.innerHTML=wasCorrect
+    ?'<div style="font-size:14px;color:#3B6D11;font-weight:600;padding:10px 0;text-align:center;">✓ Bien joué !</div>'
+    :'<div style="font-size:14px;color:#A32D2D;font-weight:600;padding:10px 0;text-align:center;">✗ Dommage !</div>';
+  setTimeout(()=>{ if(deck.length===0) showEnd(); else handleDeckClick(); }, 750);
+}
+
+function showEnd(){
+  document.getElementById('game').style.display='none';
+  const total=ALL_QUESTIONS.length;
+  const pct=Math.round(correct/total*100);
+  document.getElementById('end-score').textContent=correct+' / '+total;
+  const msg=pct>=90?'🏆 Excellent ! Tu maîtrises parfaitement NutriVie.':pct>=70?'👏 Très bien ! Quelques notions à consolider.':pct>=50?'📚 Pas mal, mais encore du travail !':'💪 Continue à réviser, tu vas y arriver !';
+  document.getElementById('end-msg').textContent=msg;
+  document.getElementById('end-screen').style.display='block';
+}
+
+function restart(){
+  correct=0; wrong=0; animating=false; waitingVote=false;
+  deck=shuffle([...ALL_QUESTIONS]);
+  document.getElementById('end-screen').style.display='none';
+  document.getElementById('game').style.display='flex';
+  document.getElementById('card-area').innerHTML='<div class="placeholder-card"><i class="ti ti-rotate-clockwise-2"></i><span>La réponse apparaîtra ici</span></div>';
+  document.getElementById('deck-top').style.opacity='1';
+  document.getElementById('deck-top').style.cursor='pointer';
+  updateScoreBar();
+  updateDeckPreview();
+}
+
+deck=shuffle([...ALL_QUESTIONS]);
+updateDeckPreview();
+updateScoreBar();
+</script>
+</body>
+</html>

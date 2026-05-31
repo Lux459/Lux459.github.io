@@ -1,0 +1,131 @@
+html{
+    max-width: 200%;
+    overflow-x: hidden;
+}
+
+@font-face {
+  font-family: fonttitre; /* set name */
+  src: url(Cinzel-Regular.otf); /* url of the font */
+}
+
+body{
+	position : absolute;
+	background-color : rgb(217,244,205);
+	z-index : 0;
+}
+
+nav{
+	background-color : rgb(217,244,205);
+	position : fixed;
+	font-family : "Arial";
+	top : 0px;
+	z-index : 999;
+	width : 99%;
+	text-align : right;
+}
+
+.imgmain{
+	position : absolute;
+	background-color : rgb(0,192,237);
+	border : solid rgb(0, 104 ,156);
+	width : 50%;
+	height : 25.5%;
+	top : -55%;
+	left : 20%;
+	border-radius : 15px;
+}
+
+.imgmain2{
+	position : absolute;
+	background-color : rgb(222,169,86);
+	border : solid rgb(179,96,0);
+	width : 40%;
+	height : 5%;
+	top : -27%;
+	left : 25%;
+	border-radius : 15px;
+}
+
+.tableau{
+	position : absolute;
+	z-index : 50;
+	top : 60em;
+	width : 1px;
+	height : 1px;
+}
+
+.img1{
+	position : relative;
+	border : solid rgb(40,40,40);
+	background-color : rgb(79,79,79);
+	width : 65%;
+	height : 187%;
+	top : -60%;
+	border-radius : 15px;
+}
+
+.img21{
+	position : relative;
+	border : solid rgb(10,11,102);
+	background-color : rgb(117,141,222);
+	width : 40%;
+	height : 35%;
+	top : -35%;
+	left : -14%;
+	border-radius : 15px;
+}
+
+.img22{
+	position : relative;
+	border : solid rgb(10,11,102);
+	background-color : rgb(117,141,222);
+	width : 40%;
+	height : 35%;
+	top : -71%;
+	left : 34%;
+	border-radius : 15px;
+}
+
+.img23{
+	position : relative;
+	border : solid rgb(10,11,102);
+	background-color : rgb(117,141,222);
+	width : 40%;
+	height : 35%;
+	top : -50%;
+	left : 9%;
+	border-radius : 15px;
+}
+
+.img4{
+	position : relative;
+	border : solid rgb(54,14,81);
+	background-color : rgb(87,0,140);
+	width : 80%;
+	height : 84%;
+	top : -30%;
+	left : 0%;
+	border-radius : 15px;
+}
+
+.img5{
+	position : relative;
+	border : solid rgb(1, 117 ,0);
+	background-color : rgb(1,179,0);
+	width : 75%;
+	height : 75%;
+	top : -10%;
+	left : -5%;
+	border-radius : 15px;
+}
+
+.img6{
+	position : relative;
+	border : solid rgb(179,96,0);
+	background-color : rgb(250,135,0);
+	width : 75%;
+	height : 102%;
+	top : -15%;
+	left : 90%;
+	border-radius : 15px;
+}

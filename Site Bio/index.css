@@ -1,0 +1,125 @@
+html{
+    max-width: 200%;
+    overflow-x: hidden;
+}
+
+@font-face {
+  font-family: fonttitre; /* set name */
+  src: url(Cinzel-Regular.otf); /* url of the font */
+}
+
+body{
+	position : absolute;
+	background-color : rgb(217,244,205);
+	z-index : 0;
+}
+
+.etatlieu{
+	position :absolute;
+	font-size : 4.2rem;
+	top : 400%;
+	width : 200%;
+	background-color : rgb(198,220,141);
+	text-align : center;
+	left : -1%;
+	font-family : Corbel;
+}
+
+nav{
+	background-color : rgb(217,244,205);
+	position : fixed;
+	font-family : "Arial";
+	top : 0px;
+	z-index : 999;
+	width : 99%;
+	text-align : right;
+}
+
+.main{
+	display : flex;
+	align-items : center;
+	justify-content : center;
+	position : absolute;
+	left : 30%
+}
+
+.imagemain{
+	height : 450%;
+	width : 450%;
+	position : relative;
+	right : -150%;
+	top : -50px;
+}
+
+.titre{
+	font-size : 34px;
+	text-align : left;
+	font-family : fonttitre;
+	line-height : 50px;
+	width : 80%;
+}
+
+.titre2{
+	position : relative;
+	top : 550px;
+	display : flex;
+	align-items: center;
+	justify-content : center;
+	right : -50%;
+	font-size : 35px;
+	font-family : Corbel;
+}
+
+.partie2{
+	position : absolute;
+	top : 480%;
+	font-family : Corbel;
+}
+
+.textebateau{
+	font-size : 30px;
+	width : 150%;
+	text-align : left;
+	position : relative;
+	right : -25%;
+}
+
+.puntos{
+	position : absolute;
+	font-size : 30px;
+	top : 150%;
+	right : -110%;
+	font-size : 45px;
+}
+
+.calmetoi{
+	width : 40%;
+	height: 40%;
+	z-index : 10;
+}
+
+.textepuntos{
+	width : 40%;
+}
+
+.plusmain{
+	position : absolute;
+	font-size : 30px;
+	top : 200%;
+	right : -110%;
+}
+
+.plustitre{
+	font-size : 50px;
+	width : 20%;
+	position : relative;
+	right : -15%;
+}
+
+.plusimagemain{
+	position : relative;
+	width : 40%;
+	height : 40%;
+	right : -25%;
+	top : -40px;
+}
